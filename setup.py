@@ -7,6 +7,7 @@ setup(
     author_email='ben@benjaminlambert.com',
     packages=['asr_tools'],
     description='Automatic speech recognition tools.',
+    url='https://github.com/belambert/asr-tools',
     keywords=['automatic speech recognition', 'speech recognition', 'asr'],
     classifiers=[
         "Development Status :: 4 - Beta",

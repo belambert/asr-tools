@@ -17,8 +17,7 @@ test:
 
 coverage:
 	python3 -m coverage erase
-	python3 -m coverage run setup.py test
-	python3 -m coverage html
+	python3 -m coverage run --source asr_tools setup.py test
 	python3 -m coverage report
 
 doc:

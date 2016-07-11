@@ -4,16 +4,13 @@
 
 import argparse
 import operator
-import logging
 import termcolor
 import colorama
 import asr_tools.evaluation_util
 
 from asr_tools.kaldi import read_nbest_file
 from asr_tools.kaldi import read_transcript_table
-from asr_tools.evaluation_util import evaluate
 from asr_tools.nbest_util import evaluate_nbests, print_nbest
-from asr_tools.sentence_util import print_sentence
 from asr_tools.sentence import Sentence
 from asr_tools.scores import monotone
 

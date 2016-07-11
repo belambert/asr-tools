@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+# from asr_tools.kaldi import read_transcript_table
 from asr_tools.evaluation import Evaluation
 from edit_distance import SequenceMatcher, edit_distance
 from asr_evaluation.asr_evaluation import print_diff as eval_print_diff
@@ -9,7 +10,6 @@ REFERENCES = OrderedDict()
 def evaluate_hyps(hyps, ref_table):
     evals = []
     for hyp in hyps:
-        ref = ref_table[hyp.id_]
         eval_ = evaluate(ref_table, hyp)
         evals.append(eval_)
     return sum(evals[1:], evals[0])

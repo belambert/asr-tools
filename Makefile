@@ -27,3 +27,6 @@ doc:
 
 showdoc:
 	pydoc `find asr_tools -name '*.py'`
+
+style:
+	pep8 --max-line-length=120 --ignore=E701,E302

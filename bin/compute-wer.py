@@ -6,7 +6,6 @@
 import argparse
 from asr_tools.kaldi import read_transcript
 from asr_tools.kaldi import read_transcript_table
-from asr_tools.evaluation_util import evaluate
 from asr_tools.evaluation_util import evaluate_hyps
 
 

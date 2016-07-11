@@ -20,8 +20,8 @@ class Evaluation():
         """Calculate word recognition rate (WRR)"""
         return self.matches / self.ref_len
 
-    def is_correct():
-        return errs == 0
+    def is_correct(self):
+        return self.errs == 0
 
     def __add__(self, other):
         """Add each field, creating a new object."""

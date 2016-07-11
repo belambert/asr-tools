@@ -34,7 +34,6 @@ class Testing(unittest.TestCase):
             hyps = read_transcript(h)
             evals = []
             for hyp in hyps:
-                ref = ref_table[hyp.id_]
                 eval_ = evaluate(ref_table, hyp)
                 evals.append(eval_)
             overall_eval = sum(evals[1:], evals[0])

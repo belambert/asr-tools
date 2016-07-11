@@ -3,6 +3,7 @@ import asr_tools.evaluation_util
 from asr_tools.evaluation_util import evaluate
 from asr_tools.evaluation_util import sum_evals
 from asr_tools.evaluation_util import get_global_reference
+from asr_tools.evaluation_util import print_diff
 from asr_tools.sentence_util import print_sentence
 
 
@@ -26,7 +27,6 @@ def nbest_oracle_eval(nbest, n=None):
 def evaluate_nbest(nbest, force=False):
     """Run our evaluation on each sentence in the nbest list.  Will skip evaluation if one
     is already there, unless forced to.  Saves the evaluation with each sentence."""
-    id_ = nbest.id_
     for s in nbest.sentences:
         if force or s.eval_ is None:    # Only compute the evaluation if not already computed.
             e = evaluate(asr_tools.evaluation_util.REFERENCES, s)
@@ -89,7 +89,6 @@ def print_nbest_ref_hyp_best(nbest):
     ref = get_global_reference(nbest.id_)
     hyp = nbest.sentences[0]
     best = nbest_best_sentence(nbest)
-    best_rank = nbest.sentences.index(best)
     print_diff(ref, best, prefix1='REF: ', prefix2='BEST:')
     print_diff(best, hyp, prefix1='BEST:', prefix2='HYP: ')
     print('=' * 60)

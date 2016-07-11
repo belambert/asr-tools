@@ -1,8 +1,6 @@
-import sys
 
 from io import StringIO
 
-from asr_tools.sentence import Sentence
 from asr_tools.evaluation_util import get_global_reference
 from asr_tools.evaluation_util import print_diff
 from asr_tools.nbest_util import nbest_best_sentence
@@ -47,7 +45,6 @@ class NBest:
         ref = get_global_reference(self.id_)
         hyp = self.sentences[0]
         best = nbest_best_sentence(self)
-        best_rank = self.sentences.index(best)
         print_diff(ref, best, prefix1='REF: ', prefix2='BEST:')
         print_diff(best, hyp, prefix1='BEST:', prefix2='HYP: ')
         print('=' * 60)

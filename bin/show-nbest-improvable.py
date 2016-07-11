@@ -7,8 +7,6 @@ import asr_tools.evaluation_util
 
 from asr_tools.kaldi import read_nbest_file
 from asr_tools.kaldi import read_transcript_table
-from asr_tools.evaluation_util import evaluate
-from asr_tools.evaluation_util import REFERENCES
 from asr_tools.nbest_util import evaluate_nbests
 
 

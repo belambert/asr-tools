@@ -2,7 +2,6 @@ import logging
 
 from collections import OrderedDict
 
-import asr_tools.logging
 from asr_tools.nbest import NBest
 from asr_tools.sentence import Sentence
 
@@ -31,7 +30,6 @@ def read_nbest_file(f):
     "Read a Kaldi n-best file."
     nbests = []
     nbest = []
-    current_id = None
     prev_id = None
     id_ = None
     while True:

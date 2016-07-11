@@ -1,5 +1,9 @@
 from io import StringIO
 
+"""
+Print a sentence, optionally with lots of additional information like the ASR scores.
+"""
+
 def print_sentence(s, acscore=True, lmscore=True, tscore=True, tscore_wip=False,
                    wcount=False, lmwt=10.0, maxwords=None, wer=True):
     """Prints all sentence scores including acoustic, lm, overall, etc."""

@@ -16,10 +16,14 @@ class Sentence:
         return sentence_str
 
     def wer(self):
+        """Returns this sentence's WER if the sentence already has been evaluated.
+        Otherwise return zero.  This is probably not a great way to do this..."""
         if self.eval_:
             return self.eval_.wer()
         else:
             return 0.0
 
     def score(self, lmwt=10):
+        """Return the overall score as specified by the ASR engine:
+        acoustic_score + lm_score * lm_weight."""
         return self.acscore + self.lmscore * lmwt

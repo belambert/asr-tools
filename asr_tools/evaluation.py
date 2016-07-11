@@ -40,6 +40,6 @@ class Evaluation():
                  "WER:        {:>10.2%}".format(self.wer())]
         return '\n'.join(lines)
 
-    def __cmp__(self, other):
+    def __lt__(self, other):
         """Comparison is done by WER."""
-        self.wer() - other.wer()
+        return (self.wer() - other.wer()) < 0

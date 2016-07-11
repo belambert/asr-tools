@@ -1,9 +1,15 @@
 from collections import OrderedDict
 
-# from asr_tools.kaldi import read_transcript_table
-from asr_tools.evaluation import Evaluation
 from edit_distance import SequenceMatcher, edit_distance
+from asr_tools.evaluation import Evaluation
+
+# Are these good imports??  Maybe in a file like kaldi_util?
+from asr_tools.kaldi import read_transcript
+from asr_tools.kaldi import read_transcript_table
+
+# This is the only place in asr_tools (and semlm) that we refer to asr_evaluation
 from asr_evaluation.asr_evaluation import print_diff as eval_print_diff
+
 
 REFERENCES = OrderedDict()
 

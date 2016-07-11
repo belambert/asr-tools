@@ -1,39 +1,103 @@
+import os
+import sys
+import copy
 import unittest
 
 from asr_tools.kaldi import read_nbest_file
 from asr_tools.kaldi import read_transcript_table
 from asr_tools.kaldi import read_transcript
-from asr_tools.evaluation_util import evaluate
+from asr_tools.evaluation_util import evaluate, evaluate_hyps, get_global_reference, set_global_references, sentence_editdistance
+from asr_tools.evaluation_util import print_diff, sum_evals
+
+from asr_tools.nbest_util import nbest_oracle_sort, evaluate_nbests, print_nbest, print_nbest_ref_hyp_best
+
 
 class Testing(unittest.TestCase):
     """Class for testing asr_tools package."""
 
-    nbest_file = "test/data/librispeech1/lat.1.nbest.txt"
-    ref_file = "test/data/librispeech1/dev_clean.ref"
-    hyp_file = "test/data/librispeech1/dev_clean.14_0.5.tra.txt"
+    ref_file = "test/data/ref.txt"
+    hyp_file = "test/data/hyp.txt"
+    nbest_file = "test/data/nbest.txt"
 
-    # Make sure we can read the main (3) types of files.
+    refs = None
+    hyps = None
+
+    @classmethod
+    def setUpClass(cls):
+        with open(cls.ref_file) as f:
+            cls.refs = read_transcript_table(f)
+        with open(cls.ref_file) as f:
+            set_global_references(f)
+        with open(cls.hyp_file) as f:
+            cls.hyps = read_transcript(f)
+        with open(cls.nbest_file) as f:
+            cls.nbests = list(read_nbest_file(f))
+
+        cls.s1 = cls.hyps[0]
+        cls.s2 = get_global_reference(cls.s1.id_)
+
+        # Evaluate each and check their WER
+        cls.e1 = evaluate(cls.refs, cls.s1)
+        cls.e2 = evaluate(cls.refs, cls.s2)
+
+       
+    def test_evaluation(self):
+        # Evaluate all of the hyps
+        evaluate_hyps(self.hyps, self.refs)
+
+    def test_sent_editdistance(self):
+        self.assertTrue(sentence_editdistance(self.s1, self.s2) == 1)
+
+    def test_evaluation_summation(self):
+        # Check if the evaluation summation works correctly
+        self.assertAlmostEqual(sum_evals([self.e1, self.e2]).wer(), 0.0294, delta=0.001)
+        self.assertAlmostEqual(sum_evals([self.e1]).wer(), 0.0588, delta=0.001)
+
+    def test_evaluation_object(self):        
+        # Excersise all the functions of an evaluation object
+        self.assertAlmostEqual(self.e1.wer(), 0.0588, delta=0.001)
+        self.assertAlmostEqual(self.e1.wrr(), 0.9411, delta=0.001)
+        self.assertFalse(self.e1.is_correct())
+        self.assertFalse(self.e1 < self.e2)
+        self.assertAlmostEqual(self.e1.wer(), 0.0588, delta=0.001)
+        self.assertEqual(self.e2.wer(), 0.0)
+
+    def test_invalid_id(self):
+        # Make sure we get an exception if we have an invalid sentence ID
+        s = copy.copy(self.s1)
+        s.id_ = ""
+        with self.assertRaises(Exception):
+            evaluate(self.refs, s)
+
+    def test_printing(self):
+        with open(os.devnull, 'w') as f:
+            sys.stdout = f
+            print(self.e1)
+            print_diff(self.s1, self.s2)
+            print(self.nbests[0])
+
+            print_nbest(self.nbests[0],
+                        acscore=True, lmscore=True, tscore=True, tscore_wip=True, 
+                        wcount=True, lmwt=10.0, maxwords=None, print_instances=True)
+            print_nbest_ref_hyp_best(self.nbests[0])
+            sys.stdout = sys.__stdout__
+
     def test_read_nbest(self):
-        """Can we read n-best list files properly?"""
         with open(self.nbest_file) as f:
             nbests = list(read_nbest_file(f))
-            self.assertTrue(len(nbests) == 40)
-
+            self.assertTrue(len(nbests) == 15)
+        
     def test_read_transcript(self):
-        """Can we read transcript files properly?"""
         with open(self.ref_file) as f:
             refs = read_transcript_table(f)
-            self.assertTrue(len(refs) == 2703)
+            self.assertTrue(len(refs) == 15)
 
     def test_read_hyp(self):
-        """Can we read hypothesis files properly?"""
         with open(self.hyp_file) as f:
-            refs = read_transcript(f)
-            self.assertTrue(len(refs) == 2703)
+            hyps = read_transcript(f)
+            self.assertTrue(len(hyps) == 15)
 
-    def test_evaluation(self):
-        """This compares a hyp file to a ref file--this test is probably too slow.
-        This may also not be a good package to have this test?"""
+    def test_e2e_evaluation(self):
         with open(self.hyp_file) as h, open(self.ref_file) as r:
             ref_table = read_transcript_table(r)
             hyps = read_transcript(h)
@@ -42,6 +106,11 @@ class Testing(unittest.TestCase):
                 eval_ = evaluate(ref_table, hyp)
                 evals.append(eval_)
             overall_eval = sum(evals[1:], evals[0])
-            self.assertTrue(overall_eval.ref_len == 54402)
-            self.assertTrue(overall_eval.matches == 51159)
-            self.assertTrue(overall_eval.errs == 3815)
+            self.assertTrue(overall_eval.ref_len == 335)
+            self.assertTrue(overall_eval.matches == 307)
+            self.assertTrue(overall_eval.errs == 32)
+
+    # Want to also check the values for these...
+    # def test_nbest(self):
+    #     eval_ = evaluate_nbests(self.nbests)
+    #     nbest_oracle_sort(self.nbests[0])

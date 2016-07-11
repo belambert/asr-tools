@@ -16,5 +16,5 @@ setup(
         "Topic :: Scientific/Engineering",
         "License :: OSI Approved :: BSD License"],
     # install_requires=['edit_distance', 'asr_evaluation'],
-    test_suite='test.test_main.Testing'
+    test_suite='test.test_main'
 )

@@ -2,10 +2,9 @@ import logging
 
 from collections import OrderedDict
 
+# I guess these make sense for imports...
 from asr_tools.nbest import NBest
 from asr_tools.sentence import Sentence
-
-logger = logging.getLogger('asr_tools')
 
 
 def read_transcript_table(f):
@@ -34,13 +33,13 @@ def read_nbest_file(f):
     prev_id = None
     id_ = None
     while True:
-        logger.debug('|NBESTS| = {}'.format(len(nbests)))
-        logger.debug('|NBEST| = {}'.format(len(nbest)))
+        # logger.debug('|NBESTS| = {}'.format(len(nbests)))
+        # logger.debug('|NBEST| = {}'.format(len(nbest)))
         entry = read_nbest_entry_lines(f)  # this is a sentence, which is spread across several lines
-        logger.debug('ENTRY: ' + str(entry))
+        # logger.debug('ENTRY: ' + str(entry))
         if not entry:
             nbests.append(NBest(nbest, id_))
-            logger.debug(nbest)
+            # logger.debug(nbest)
             break
             # yield NBest(nbest, id_)
         id_ = entry[0]
@@ -70,7 +69,7 @@ def read_nbest_entry_lines(f):
         else:
             entry_lines.append(line.strip())
     # TODO - Is this handling all cases?
-            
+
 def entry_lines_to_sentence(lines):
     """Convert all the string lines corresponding to a sentence into a
     sentence object."""

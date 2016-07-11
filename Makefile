@@ -19,6 +19,7 @@ coverage:
 	python3 -m coverage erase
 	python3 -m coverage run --source asr_tools setup.py test
 	python3 -m coverage report
+	python3 -m coverage html
 
 doc:
 	mkdir -p doc

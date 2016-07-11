@@ -1,3 +1,4 @@
+import copy
 import asr_tools.evaluation_util
 
 from asr_tools.evaluation_util import evaluate
@@ -6,10 +7,12 @@ from asr_tools.evaluation_util import get_global_reference
 from asr_tools.evaluation_util import print_diff
 from asr_tools.sentence_util import print_sentence
 
+# These aren't using the functions defined in the reranking file, but probably should... or
+# should the things that do re-ranking be located elsewhere?
 
 def nbest_oracle_sort(nbest, n=None):
     """Sort an n-best list by it's WER."""
-    nbest = nbest.copy()
+    nbest = copy.copy(nbest)
     if n: nbest.sentences = nbest.sentences[:n]
     nbest.sentences = sorted(nbest.sentences, key=lambda x: x.eval_.wer())
     return nbest
@@ -92,3 +95,41 @@ def print_nbest_ref_hyp_best(nbest):
     print_diff(ref, best, prefix1='REF: ', prefix2='BEST:')
     print_diff(best, hyp, prefix1='BEST:', prefix2='HYP: ')
     print('=' * 60)
+
+# Moved from nbest.py
+# These were causing a circular import... have to move them... likely to
+# nbest_util...?
+    
+# def print_with_wer(self):
+#     """Returns a string representation of the object."""
+#     best = nbest_best_sentence(self)
+#     best_rank = self.sentences.index(best)
+#     print_str = StringIO()
+#     print_str.write('ID: {} (#{} is best)\n'.format(self.id_, best_rank))
+#     for i, s in enumerate(self.sentences):
+#         print_str.write('{:3d} {}'.format(i + 1, s))
+#         if best_rank == i:
+#             print_str.write(' **')
+#         print_str.write('\n')
+#     print(print_str.getvalue())
+
+# def print_ref_hyp_best(self):
+#     """Print three sentences: the reference, the top hypothesis, and the lowest WER
+#     hypothesis on the n-best list."""
+#     ref = get_global_reference(self.id_)
+#     hyp = self.sentences[0]
+#     best = nbest_best_sentence(self)
+#     print_diff(ref, best, prefix1='REF: ', prefix2='BEST:')
+#     print_diff(best, hyp, prefix1='BEST:', prefix2='HYP: ')
+#     print('=' * 60)
+
+# This is another possible way to print the ref/hyp/best
+# print_str = ''
+# print_str += 'ID: {} (#{} is best)\n'.format(self.id_, best_rank)
+# if get_global_reference(self.id_):
+#     print_str += '{:3} '.format('') + str(ref) + '\n'
+# else:
+#     print_str += '    No reference found.\n'
+# print_str += '{:3d} '.format(1) + str(hyp) + '\n'
+# print_str += '{:3d} '.format(best_rank + 1) + str(best) + '\n'
+# print(ref)

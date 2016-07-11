@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# This could be in another package...
-
 import argparse
 import operator
 import termcolor
@@ -16,6 +14,7 @@ from asr_tools.scores import monotone
 
 
 def main():
+    """Main method to show n-best lists, printing to console."""
     parser = argparse.ArgumentParser()
     parser.add_argument("nbest_file", type=argparse.FileType('r'))
     parser.add_argument("ref_file", nargs='?', type=argparse.FileType('r'))  # optional

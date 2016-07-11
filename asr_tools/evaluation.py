@@ -1,13 +1,15 @@
-# In my previous version, I had a couple versions of evaluation object.
-# Some contained the words, etc. that caused errors.
-# We can use this same object for sentence error rate.
 
 class Evaluation():
+    """An class the represents an evaluation.  This doesn't have any particular
+    requirements on what's being evaluated.  So it could be a single sentence
+    evaluation, or an evaluation for an entire corpus."""
+
     ref_len = None
     matches = None
     errs = None
 
     def __init__(self, ref_len, matches, errs):
+        """Constructor requires ref_len, # of matches, and # of errors."""
         self.ref_len = ref_len
         self.matches = matches
         self.errs = errs
@@ -21,6 +23,7 @@ class Evaluation():
         return self.matches / self.ref_len
 
     def is_correct(self):
+        """The thing being evaluated is correct if there are zero errors."""
         return self.errs == 0
 
     def __add__(self, other):
@@ -38,4 +41,5 @@ class Evaluation():
         return '\n'.join(lines)
 
     def __cmp__(self, other):
+        """Comparison is done by WER."""
         self.wer() - other.wer()

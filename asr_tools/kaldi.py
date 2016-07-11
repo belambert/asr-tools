@@ -18,6 +18,7 @@ def read_transcript_table(f):
     return trans_table
 
 def read_transcript(f):
+    """Read a transcript file."""
     trans = []
     for line in f:
         line = line.strip()
@@ -55,6 +56,7 @@ def read_nbest_file(f):
     return nbests
 
 def read_nbest_entry_lines(f):
+    """Read all the lines that correspond to a single sentence of a single nbest(?)."""
     entry_lines = []
     while True:
         line = f.readline()
@@ -67,8 +69,11 @@ def read_nbest_entry_lines(f):
             return entry_lines
         else:
             entry_lines.append(line.strip())
-
+    # TODO - Is this handling all cases?
+            
 def entry_lines_to_sentence(lines):
+    """Convert all the string lines corresponding to a sentence into a
+    sentence object."""
     words = []
     lmscores = []
     acscores = []

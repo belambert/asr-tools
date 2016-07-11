@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# This could be in another package...
-
 import argparse
 import asr_tools.evaluation_util
 
@@ -11,6 +9,8 @@ from asr_tools.nbest_util import evaluate_nbests
 
 
 def main():
+    """Main method for figuring out which examples from n-best lists
+    are potentially improvable."""
     parser = argparse.ArgumentParser()
     parser.add_argument("nbest_file", type=argparse.FileType('r'))
     parser.add_argument("ref_file", type=argparse.FileType('r'))

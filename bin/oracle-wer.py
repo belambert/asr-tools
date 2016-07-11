@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# This could/should be in an asr(_evaluation) package?
-
 import argparse
 import asr_tools.evaluation_util
 import matplotlib.pyplot as plt
@@ -14,6 +12,7 @@ from asr_tools.nbest_util import evals_by_depth
 
 
 def main():
+    """Main method for computing Oracle WER."""
     parser = argparse.ArgumentParser()
     parser.add_argument("nbest_file", type=argparse.FileType('r'))
     parser.add_argument("ref_file", type=argparse.FileType('r'))
@@ -27,7 +26,8 @@ def main():
     overall_eval = evaluate_nbests(nbests)
     print('Overall eval:')
     print(overall_eval)
-    print('\nOracle eval:')
+    print()
+    print('Oracle eval:')
     print(evaluate_nbests_oracle(nbests))
 
     evals = evals_by_depth(nbests)

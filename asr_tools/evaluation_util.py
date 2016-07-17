@@ -2,9 +2,6 @@ from collections import OrderedDict
 
 from edit_distance import SequenceMatcher, edit_distance
 from asr_tools.evaluation import Evaluation
-
-# Are these good imports??  Maybe in a file like kaldi_util?
-from asr_tools.kaldi import read_transcript
 from asr_tools.kaldi import read_transcript_table
 
 # This is the only place in asr_tools (and semlm) that we refer to asr_evaluation
@@ -47,6 +44,7 @@ def get_global_reference(id_):
     global REFERENCES
     return REFERENCES.get(id_)
 
+# This is the only place we use anything from asr-evaluation
 def print_diff(s1, s2, prefix1='REF:', prefix2='HYP:'):
     """Print a readable diff between two sentences."""
     a = s1.words

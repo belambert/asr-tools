@@ -1,11 +1,10 @@
 import logging
-
 from collections import OrderedDict
 
-# I guess these make sense for imports...
 from asr_tools.nbest import NBest
 from asr_tools.sentence import Sentence
 
+logger = logging.getLogger('asr_tools')
 
 def read_transcript_table(f):
     """Given a file, read in the transcripts into a hash table
@@ -33,15 +32,13 @@ def read_nbest_file(f):
     prev_id = None
     id_ = None
     while True:
-        # logger.debug('|NBESTS| = {}'.format(len(nbests)))
-        # logger.debug('|NBEST| = {}'.format(len(nbest)))
+        logger.debug('|NBESTS| = {}'.format(len(nbests)))
+        logger.debug('|NBEST| = {}'.format(len(nbest)))
         entry = read_nbest_entry_lines(f)  # this is a sentence, which is spread across several lines
-        # logger.debug('ENTRY: ' + str(entry))
+        logger.debug('ENTRY: ' + str(entry))
         if not entry:
             nbests.append(NBest(nbest, id_))
-            # logger.debug(nbest)
             break
-            # yield NBest(nbest, id_)
         id_ = entry[0]
         id_ = id_.rsplit('-', maxsplit=1)[0]
         if not prev_id:
@@ -90,28 +87,3 @@ def entry_lines_to_sentence(lines):
     lmscore = sum(lmscores)
     acscore = sum(acscores)
     return Sentence(id_, words, lmscore=lmscore, acscore=acscore)
-
-# def read_nbest_file(f):
-#     "Read a Kaldi n-best file."
-#     nbest = []
-#     current_id = None
-#     prev_id = None
-#     id_ = None
-#     while True:
-#         entry = read_nbest_entry_lines(f)  # this is a sentence.
-#         # logger.info('TEST')
-#         # print(entry)
-#         if not entry:
-#             # print(nbest)
-#             break
-#             # yield NBest(nbest, id_)
-#         id_ = entry[0]
-#         id_ = id_.rsplit('-', maxsplit=1)[0]
-#         if not prev_id:
-#             prev_id = id_
-#         if id_ != prev_id:
-#             yield NBest(nbest, prev_id)
-#             nbest = []
-#             prev_id = id_
-#         s = entry_lines_to_sentence(entry)
-#         nbest.append(s)

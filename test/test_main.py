@@ -10,8 +10,8 @@ from asr_tools.evaluation_util import evaluate, evaluate_hyps, get_global_refere
 from asr_tools.evaluation_util import set_global_references, sentence_editdistance
 from asr_tools.evaluation_util import print_diff, sum_evals
 
-from asr_tools.nbest_util import nbest_oracle_sort, evaluate_nbests, print_nbest, print_nbest_ref_hyp_best
-
+from asr_tools.nbest_util import print_nbest, print_nbest_ref_hyp_best
+# from asr_tools.nbest_util import nbest_oracle_sort, evaluate_nbests
 
 class Testing(unittest.TestCase):
     """Class for testing asr_tools package."""
@@ -25,6 +25,7 @@ class Testing(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        # Load the major objects that we'll use for the tests
         with open(cls.ref_file) as f:
             cls.refs = read_transcript_table(f)
         with open(cls.ref_file) as f:
@@ -43,9 +44,11 @@ class Testing(unittest.TestCase):
 
     def test_evaluation(self):
         # Evaluate all of the hyps
-        evaluate_hyps(self.hyps, self.refs)
+        e = evaluate_hyps(self.hyps, self.refs)
+        self.assertAlmostEqual(e.wer(), 0.0955, delta=0.001)
 
     def test_sent_editdistance(self):
+        # Check if we can run edit distance successfully
         self.assertTrue(sentence_editdistance(self.s1, self.s2) == 1)
 
     def test_evaluation_summation(self):
@@ -70,6 +73,8 @@ class Testing(unittest.TestCase):
             evaluate(self.refs, s)
 
     def test_printing(self):
+        # Make sure we can print without raising any exceptions.  Doesn't check for
+        # correctness.
         with open(os.devnull, 'w') as f:
             sys.stdout = f
             print(self.e1)
@@ -83,21 +88,25 @@ class Testing(unittest.TestCase):
             sys.stdout = sys.__stdout__
 
     def test_read_nbest(self):
+        # Make sure we can read an n-best and get the right number of nbest lists back
         with open(self.nbest_file) as f:
             nbests = list(read_nbest_file(f))
             self.assertTrue(len(nbests) == 15)
 
     def test_read_transcript(self):
+        # Make sure we can read a transcipt and get the right number back
         with open(self.ref_file) as f:
             refs = read_transcript_table(f)
             self.assertTrue(len(refs) == 15)
 
     def test_read_hyp(self):
+        # Make sure we can read hypotheses and get the right number back
         with open(self.hyp_file) as f:
             hyps = read_transcript(f)
             self.assertTrue(len(hyps) == 15)
 
     def test_e2e_evaluation(self):
+        # Run a full end-to-end evaluation of ASR hypotheses
         with open(self.hyp_file) as h, open(self.ref_file) as r:
             ref_table = read_transcript_table(r)
             hyps = read_transcript(h)
@@ -110,7 +119,13 @@ class Testing(unittest.TestCase):
             self.assertTrue(overall_eval.matches == 307)
             self.assertTrue(overall_eval.errs == 32)
 
-    # Want to also check the values for these...
-    # def test_nbest(self):
+    # This is relatively slow too...
+    # def test_evaluate_nbest(self):
     #     eval_ = evaluate_nbests(self.nbests)
-    #     nbest_oracle_sort(self.nbests[0])
+    #     self.assertAlmostEqual(eval_.wer(), 0.1134, delta=0.001)
+
+    # This is rather slow, so let's exclude it for now
+    # Why is it slow...?
+    # def test_nbest_oracle_sort(self):
+    #     ret = nbest_oracle_sort(self.nbests[0])
+    #     # Should do an evalutation of some sort to test for correctness

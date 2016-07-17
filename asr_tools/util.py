@@ -1,7 +1,4 @@
-import asr_tools.evaluation_util
-
 from asr_tools.nbest_util import evaluate_nbests, print_nbest, evaluate_nbests_oracle
-from asr_tools.kaldi import read_transcript_table
 
 """
 Functions to help print evaluations...

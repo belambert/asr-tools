@@ -6,7 +6,8 @@ import unittest
 from asr_tools.kaldi import read_nbest_file
 from asr_tools.kaldi import read_transcript_table
 from asr_tools.kaldi import read_transcript
-from asr_tools.evaluation_util import evaluate, evaluate_hyps, get_global_reference, set_global_references, sentence_editdistance
+from asr_tools.evaluation_util import evaluate, evaluate_hyps, get_global_reference
+from asr_tools.evaluation_util import set_global_references, sentence_editdistance
 from asr_tools.evaluation_util import print_diff, sum_evals
 
 from asr_tools.nbest_util import nbest_oracle_sort, evaluate_nbests, print_nbest, print_nbest_ref_hyp_best
@@ -40,7 +41,6 @@ class Testing(unittest.TestCase):
         cls.e1 = evaluate(cls.refs, cls.s1)
         cls.e2 = evaluate(cls.refs, cls.s2)
 
-       
     def test_evaluation(self):
         # Evaluate all of the hyps
         evaluate_hyps(self.hyps, self.refs)
@@ -53,7 +53,7 @@ class Testing(unittest.TestCase):
         self.assertAlmostEqual(sum_evals([self.e1, self.e2]).wer(), 0.0294, delta=0.001)
         self.assertAlmostEqual(sum_evals([self.e1]).wer(), 0.0588, delta=0.001)
 
-    def test_evaluation_object(self):        
+    def test_evaluation_object(self):
         # Excersise all the functions of an evaluation object
         self.assertAlmostEqual(self.e1.wer(), 0.0588, delta=0.001)
         self.assertAlmostEqual(self.e1.wrr(), 0.9411, delta=0.001)
@@ -77,7 +77,7 @@ class Testing(unittest.TestCase):
             print(self.nbests[0])
 
             print_nbest(self.nbests[0],
-                        acscore=True, lmscore=True, tscore=True, tscore_wip=True, 
+                        acscore=True, lmscore=True, tscore=True, tscore_wip=True,
                         wcount=True, lmwt=10.0, maxwords=None, print_instances=True)
             print_nbest_ref_hyp_best(self.nbests[0])
             sys.stdout = sys.__stdout__
@@ -86,7 +86,7 @@ class Testing(unittest.TestCase):
         with open(self.nbest_file) as f:
             nbests = list(read_nbest_file(f))
             self.assertTrue(len(nbests) == 15)
-        
+
     def test_read_transcript(self):
         with open(self.ref_file) as f:
             refs = read_transcript_table(f)

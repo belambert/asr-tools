@@ -99,7 +99,7 @@ def print_nbest_ref_hyp_best(nbest):
 # Moved from nbest.py
 # These were causing a circular import... have to move them... likely to
 # nbest_util...?
-    
+
 # def print_with_wer(self):
 #     """Returns a string representation of the object."""
 #     best = nbest_best_sentence(self)

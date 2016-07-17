@@ -32,4 +32,3 @@ def print_nbests(nbests):
     for nbest in nbests:
         print('NBEST:')
         print_nbest(nbest, acscore=True, lmscore=True, tscore=True, maxwords=10, print_instances=True)
-

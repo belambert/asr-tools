@@ -1,6 +1,8 @@
 
 """
 Very basic functions for re-ranking n-best lists.
+
+Not used locally in the asr-tools package, but might be used in semlm or other packages.
 """
 
 def rerank_nbests(nbests, func):

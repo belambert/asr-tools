@@ -1,5 +1,4 @@
 from collections import OrderedDict
-
 from edit_distance import SequenceMatcher, edit_distance
 from asr_tools.evaluation import Evaluation
 from asr_tools.kaldi import read_transcript_table

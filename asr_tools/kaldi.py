@@ -1,6 +1,5 @@
 import logging
 from collections import OrderedDict
-
 from asr_tools.nbest import NBest
 from asr_tools.sentence import Sentence
 

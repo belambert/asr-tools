@@ -4,7 +4,7 @@ from io import StringIO
 Representation of n-best lists.
 """
 
-class NBest:
+class NBest(object):
     """Represents an n-best list of ASR hypotheses."""
 
     sentences = None

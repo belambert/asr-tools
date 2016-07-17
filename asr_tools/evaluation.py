@@ -1,5 +1,5 @@
 
-class Evaluation():
+class Evaluation(object):
     """An class the represents an evaluation.  This doesn't have any particular
     requirements on what's being evaluated.  So it could be a single sentence
     evaluation, or an evaluation for an entire corpus."""

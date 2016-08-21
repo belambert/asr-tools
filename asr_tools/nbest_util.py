@@ -1,21 +1,16 @@
 import copy
 import asr_tools.evaluation_util
-
-from asr_tools.evaluation_util import evaluate
-from asr_tools.evaluation_util import sum_evals
-from asr_tools.evaluation_util import get_global_reference
-from asr_tools.evaluation_util import print_diff
+from asr_tools.evaluation_util import evaluate, sum_evals, get_global_reference, print_diff
 from asr_tools.sentence_util import print_sentence
 
-# These aren't using the functions defined in the reranking file, but probably should... or
-# should the things that do re-ranking be located elsewhere?
 
-def nbest_oracle_sort(nbest, n=None):
-    """Sort an n-best list by it's WER."""
-    nbest = copy.copy(nbest)
-    if n: nbest.sentences = nbest.sentences[:n]
-    nbest.sentences = sorted(nbest.sentences, key=lambda x: x.eval_.wer())
-    return nbest
+"""
+These functions have dependencies on evaluation_util, not the other way around.
+
+"""
+
+
+# Oracle related functions
 
 def nbest_best_sentence(nbest, n=None):
     """Find and return the sentence with the lowest WER in the n-best list."""
@@ -26,6 +21,13 @@ def nbest_best_sentence(nbest, n=None):
 def nbest_oracle_eval(nbest, n=None):
     """Return the evaluation object of the best sentence in the nbest list."""
     return nbest_best_sentence(nbest, n=n).eval_
+
+def evaluate_nbests_oracle(nbests):
+    """Return a single oracle evaluation for a list of n-best lists."""
+    evals = list(map(nbest_oracle_eval, nbests))
+    return sum_evals(evals)
+
+# Evaluating n-bests
 
 def evaluate_nbest(nbest, force=False):
     """Run our evaluation on each sentence in the nbest list.  Will skip evaluation if one
@@ -41,11 +43,6 @@ def evaluate_nbests(nbests):
     evals = list(map(evaluate_nbest, nbests))
     return sum_evals(evals)
 
-def evaluate_nbests_oracle(nbests):
-    """Return a single oracle evaluation for a list of n-best lists."""
-    evals = list(map(nbest_oracle_eval, nbests))
-    return sum_evals(evals)
-
 def evals_by_depth(nbests, n=100):
     """Return overall oracle evaluations as a function of the depth of the n-best lists."""
     evals_by_depth = [None] * n
@@ -55,6 +52,9 @@ def evals_by_depth(nbests, n=100):
             evals.append(nbest_oracle_eval(nbest, i + 1))
         evals_by_depth[i] = sum_evals(evals)
     return evals_by_depth
+
+
+# Printing n-bests
 
 def print_nbest(nbest, acscore=True, lmscore=True, tscore=True, tscore_wip=False,
                 wcount=False, lmwt=10.0, maxwords=None, print_instances=False):
@@ -96,11 +96,20 @@ def print_nbest_ref_hyp_best(nbest):
     print_diff(best, hyp, prefix1='BEST:', prefix2='HYP: ')
     print('=' * 60)
 
+def print_nbests(nbests):
+    """Just print a set of n-bests."""
+    for nbest in nbests:
+        print('NBEST:')
+        print_nbest(nbest, acscore=True, lmscore=True, tscore=True, maxwords=10, print_instances=True)
+
+# Printing evaluations
+
+# This should be called print_nbest_eval...
 def print_eval(nbests):
     """Print an evaluation and an oracle evaluation."""
-    eval = evaluate_nbests(nbests)
+    eval_ = evaluate_nbests(nbests)
     print('Eval:')
-    print(eval)
+    print(eval_)
     print('Oracle eval:')
     print(evaluate_nbests_oracle(nbests))
 
@@ -113,12 +122,6 @@ def print_train_test_eval(train_nbests, test_nbests):
     print()
     print('Test eval:')
     print_eval(test_nbests)
-
-def print_nbests(nbests):
-    """Just print a set of n-bests."""
-    for nbest in nbests:
-        print('NBEST:')
-        print_nbest(nbest, acscore=True, lmscore=True, tscore=True, maxwords=10, print_instances=True)
 
     
 # Moved from nbest.py

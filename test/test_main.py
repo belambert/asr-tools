@@ -162,7 +162,7 @@ class Testing(unittest.TestCase):
         sys.stdout = sys.__stdout__
  
     def test_scoring(self):
-        print(monotone(self.nbests[0].sentences, comparison=operator.lt, key=Sentence.score))
+        self.assertTrue(monotone(self.nbests[0].sentences, comparison=operator.lt, key=Sentence.score))
 
 
     #TODO - Add tests for re<ranking.py

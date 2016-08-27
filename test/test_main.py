@@ -2,16 +2,22 @@ import os
 import sys
 import copy
 import unittest
+import operator
 
 from asr_tools.kaldi import read_nbest_file
 from asr_tools.kaldi import read_transcript_table
 from asr_tools.kaldi import read_transcript
+from asr_tools.sentence import Sentence
 from asr_tools.evaluation_util import evaluate, evaluate_hyps, get_global_reference
 from asr_tools.evaluation_util import set_global_references, sentence_editdistance
 from asr_tools.evaluation_util import print_diff, sum_evals
 
-from asr_tools.nbest_util import print_nbest, print_nbest_ref_hyp_best
-# from asr_tools.nbest_util import nbest_oracle_sort, evaluate_nbests
+from asr_tools.nbest_util import print_nbest, print_nbest_ref_hyp_best, nbest_best_sentence
+from asr_tools.nbest_util import evaluate_nbests, evaluate_nbest, evaluate_nbests_oracle, evals_by_depth
+from asr_tools.nbest_util import print_nbest_ref_hyp_best, print_nbests, print_eval, print_train_test_eval
+
+from asr_tools.scores import monotone
+from asr_tools.reranking import rerank_nbest, rerank_nbests
 
 class Testing(unittest.TestCase):
     """Class for testing asr_tools package."""
@@ -41,7 +47,7 @@ class Testing(unittest.TestCase):
         # Evaluate each and check their WER
         cls.e1 = evaluate(cls.refs, cls.s1)
         cls.e2 = evaluate(cls.refs, cls.s2)
-
+        
     def test_evaluation(self):
         # Evaluate all of the hyps
         e = evaluate_hyps(self.hyps, self.refs)
@@ -82,10 +88,10 @@ class Testing(unittest.TestCase):
             print(self.nbests[0])
 
             # Commenting this out just to make a test pass :-(
-            # print_nbest(self.nbests[0],
-            #             acscore=True, lmscore=True, tscore=True, tscore_wip=True,
-            #             wcount=True, lmwt=10.0, maxwords=None, print_instances=True)
-            # print_nbest_ref_hyp_best(self.nbests[0])
+            print_nbest(self.nbests[0],
+                        acscore=True, lmscore=True, tscore=True, tscore_wip=True,
+                        wcount=True, lmwt=10.0, maxwords=None, print_instances=True)
+            print_nbest_ref_hyp_best(self.nbests[0])
             sys.stdout = sys.__stdout__
 
     def test_read_nbest(self):
@@ -130,3 +136,33 @@ class Testing(unittest.TestCase):
     # def test_nbest_oracle_sort(self):
     #     ret = nbest_oracle_sort(self.nbests[0])
     #     # Should do an evalutation of some sort to test for correctness
+
+    # this takes about 2 seconds
+    def test_evaluation2(self):
+        nbest = self.nbests[0]
+        eval_ = evaluate_nbest(nbest)
+        best_sentence = nbest_best_sentence(nbest)
+        self.assertTrue(best_sentence.wer() == 0.0)
+        all_nbests_eval = evaluate_nbests(self.nbests)
+        self.assertAlmostEqual(all_nbests_eval.wer(), 0.1134, delta=0.001) 
+        oracle_eval = evaluate_nbests_oracle(self.nbests)
+        self.assertTrue(oracle_eval.wer() == 0.06865671641791045)
+        evals = evals_by_depth(self.nbests, n=10)
+        self.assertTrue(evals[5].wer() == 0.08059701492537313)
+
+    # This doesn't check correctness, it just checks that these functions
+    # can be called without throwing an error
+    def test_nbest_printing(self):
+        sys.stdout = open(os.devnull,"w")
+        print_nbests(self.nbests)
+        print_nbest_ref_hyp_best(self.nbests[0])
+        eval_ = evaluate_nbest(self.nbests[0])
+        print_train_test_eval(self.nbests, self.nbests)
+        sys.stdout.close()
+        sys.stdout = sys.__stdout__
+ 
+    def test_scoring(self):
+        print(monotone(self.nbests[0].sentences, comparison=operator.lt, key=Sentence.score))
+
+
+    #TODO - Add tests for re<ranking.py

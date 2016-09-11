@@ -12,15 +12,9 @@ These functions have dependencies on evaluation_util, not the other way around.
 
 # Oracle related functions
 
-def nbest_best_sentence(nbest, n=None):
-    """Find and return the sentence with the lowest WER in the n-best list."""
-    sentences = nbest.sentences
-    if n: sentences = sentences[:n]
-    return min(sentences, key=lambda x: x.wer())
-
 def nbest_oracle_eval(nbest, n=None):
     """Return the evaluation object of the best sentence in the nbest list."""
-    return nbest_best_sentence(nbest, n=n).eval_
+    return nbest.oracle_hyp(n=n).eval_
 
 def evaluate_nbests_oracle(nbests):
     """Return a single oracle evaluation for a list of n-best lists."""
@@ -62,7 +56,7 @@ def print_nbest(nbest, acscore=True, lmscore=True, tscore=True, tscore_wip=False
     # This might be relatively slow because of all the string concatenation
     print_str = ''
     hyp = nbest.sentences[0]
-    best = nbest_best_sentence(nbest)
+    best = nbest.oracle_hyp()
     best_rank = nbest.sentences.index(best)
     print_str += 'ID: {} (#{} is best)\n'.format(nbest.id_, best_rank + 1)
 
@@ -91,8 +85,9 @@ def print_nbest_ref_hyp_best(nbest):
     hypothesis on the n-best list."""
     ref = get_global_reference(nbest.id_)
     hyp = nbest.sentences[0]
-    best = nbest_best_sentence(nbest)
+    best = nbest.oracle_hyp()
     print_diff(ref, best, prefix1='REF: ', prefix2='BEST:')
+    print('---')
     print_diff(best, hyp, prefix1='BEST:', prefix2='HYP: ')
     print('=' * 60)
 
@@ -138,16 +133,6 @@ def print_train_test_eval(train_nbests, test_nbests):
 #             print_str.write(' **')
 #         print_str.write('\n')
 #     print(print_str.getvalue())
-
-# def print_ref_hyp_best(self):
-#     """Print three sentences: the reference, the top hypothesis, and the lowest WER
-#     hypothesis on the n-best list."""
-#     ref = get_global_reference(self.id_)
-#     hyp = self.sentences[0]
-#     best = nbest_best_sentence(self)
-#     print_diff(ref, best, prefix1='REF: ', prefix2='BEST:')
-#     print_diff(best, hyp, prefix1='BEST:', prefix2='HYP: ')
-#     print('=' * 60)
 
 # This is another possible way to print the ref/hyp/best
 # print_str = ''

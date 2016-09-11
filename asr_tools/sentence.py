@@ -1,8 +1,6 @@
 
 class Sentence(object):
     """Represents a sentence or utterance."""
-
-    # This needs to be able to hold on to a feature vector...
     
     def __init__(self, id_, words, acscore=None, lmscore=None):
         """Constructor.  ID and words are required."""

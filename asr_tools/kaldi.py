@@ -31,8 +31,8 @@ def read_nbest_file(f):
     prev_id = None
     id_ = None
     while True:
-        logger.debug('|NBESTS| = {}'.format(len(nbests)))
-        logger.debug('|NBEST| = {}'.format(len(nbest)))
+        logger.debug('|NBESTS| = {:,d}'.format(len(nbests)))
+        logger.debug('|NBEST| = {:,d}'.format(len(nbest)))
         entry = read_nbest_entry_lines(f)  # this is a sentence, which is spread across several lines
         logger.debug('ENTRY: ' + str(entry))
         if not entry:
@@ -46,6 +46,9 @@ def read_nbest_file(f):
             nbests.append(NBest(nbest, prev_id))
             nbest = []
             prev_id = id_
+            if len(nbests) % 1000 == 0:
+                print('Read {:,d} nbests.'.format(len(nbests)))
+
         s = entry_lines_to_sentence(entry)
         nbest.append(s)
     return nbests

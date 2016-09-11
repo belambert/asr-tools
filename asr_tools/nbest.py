@@ -24,3 +24,14 @@ class NBest(object):
         for i, s in enumerate(self.sentences):
             print_str.write('{:3d} {}\n'.format(i + 1, s))
         return print_str.getvalue()
+
+    def hyp(self):
+        return self.sentences[0]
+
+    def oracle_hyp(self, n=None):
+        """Find and return the sentence with the lowest WER in the n-best list."""    
+        sentences = self.sentences
+        if n: sentences = sentences[:n]
+        return min(sentences, key=lambda x: x.wer())
+
+    

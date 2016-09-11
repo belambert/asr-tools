@@ -3,16 +3,17 @@
 import argparse
 import asr_tools.evaluation_util
 
+from asr_tools.io import open_file_stream
 from asr_tools.kaldi import read_nbest_file
 from asr_tools.kaldi import read_transcript_table
-from asr_tools.nbest_util import evaluate_nbests
+from asr_tools.nbest_util import evaluate_nbests, print_nbest_ref_hyp_best
 
 
 def main():
     """Main method for figuring out which examples from n-best lists
     are potentially improvable."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("nbest_file", type=argparse.FileType('r'))
+    parser.add_argument("nbest_file", type=open_file_stream, help='A file containing n-best lists.  Read as a gzip file if filename ends with .gz')    
     parser.add_argument("ref_file", type=argparse.FileType('r'))
     args = parser.parse_args()
 
@@ -22,9 +23,7 @@ def main():
 
     overall_eval = evaluate_nbests(nbests)
     for nbest in nbests:
-        # print(nbest)
-        nbest.print_ref_hyp_best()
-        # pass
+        print_nbest_ref_hyp_best(nbest)
     print(overall_eval)
 
 if __name__ == "__main__":

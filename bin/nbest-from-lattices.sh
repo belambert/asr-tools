@@ -9,6 +9,10 @@ folder=/home/bel/kaldi-run/librispeech/s5/exp/tri5b/decode_fglarge_dev_clean
 tasks=80
 priority=1024
 
+
+# TODO: The file naming could be improved.  The final files have names like lat.1.nbest.txt
+# TODO: gzip the files
+
 # Remove alignments, they take up a huge amount of space
 # qsub -o logs -N rmali -p $priority -t 1-$tasks -j y -cwd -l mem_free=2G -b y /home/bel/software/kaldi-trunk/src/latbin/lattice-rmali  \"ark,t\:gunzip -c $folder/lat.\$SGE_TASK_ID.gz\|\" ark\:$folder/lat.\$SGE_TASK_ID.no_ali
 

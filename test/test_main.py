@@ -12,7 +12,7 @@ from asr_tools.evaluation_util import evaluate, evaluate_hyps, get_global_refere
 from asr_tools.evaluation_util import set_global_references, sentence_editdistance
 from asr_tools.evaluation_util import print_diff, sum_evals
 
-from asr_tools.nbest_util import print_nbest, print_nbest_ref_hyp_best, nbest_best_sentence
+from asr_tools.nbest_util import print_nbest, print_nbest_ref_hyp_best
 from asr_tools.nbest_util import evaluate_nbests, evaluate_nbest, evaluate_nbests_oracle, evals_by_depth
 from asr_tools.nbest_util import print_nbests, print_eval, print_train_test_eval
 
@@ -141,7 +141,7 @@ class Testing(unittest.TestCase):
     def test_evaluation2(self):
         nbest = self.nbests[0]
         eval_ = evaluate_nbest(nbest)
-        best_sentence = nbest_best_sentence(nbest)
+        best_sentence = nbest.oracle_hyp()
         self.assertTrue(best_sentence.wer() == 0.0)
         all_nbests_eval = evaluate_nbests(self.nbests)
         self.assertAlmostEqual(all_nbests_eval.wer(), 0.1134, delta=0.001) 

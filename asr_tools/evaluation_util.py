@@ -24,12 +24,13 @@ def sentence_editdistance(s1, s2):
 
 def evaluate(ref_table, s):
     """Given a sentence and a reference table, create and return an
-    Evaluation object."""
+    Evaluation object. Save a copy in the sentence."""
     ref = ref_table.get(s.id_)
     if ref is None:
         raise Exception('No reference loaded for ID: {}'.format(s.id_))
     distance, matches = edit_distance(ref.words, s.words)
     eval_ = Evaluation(len(ref.words), matches, distance)
+    s.eval_ = eval_
     return eval_
 
 def set_global_references(ref_file):
@@ -44,12 +45,12 @@ def get_global_reference(id_):
     return REFERENCES.get(id_)
 
 # This is the only place we use anything from asr-evaluation
-def print_diff(s1, s2, prefix1='REF:', prefix2='HYP:'):
+def print_diff(s1, s2, prefix1='REF:', prefix2='HYP:',suffix1=None, suffix2=None):
     """Print a readable diff between two sentences."""
     a = s1.words
     b = s2.words
     sm = SequenceMatcher(a, b)
-    eval_print_diff(sm, s1.words, s2.words, prefix1=prefix1, prefix2=prefix2)
+    eval_print_diff(sm, s1.words, s2.words, prefix1=prefix1, prefix2=prefix2, suffix1=suffix1, suffix2=suffix2)
 
 def sum_evals(evals):
     if len(evals) == 1:

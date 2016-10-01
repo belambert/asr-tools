@@ -1,14 +1,19 @@
 import copy
 import asr_tools.evaluation_util
+
+from multiprocessing import Pool
+# WTF why isn't this working?!
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+
+
+from io import StringIO
 from asr_tools.evaluation_util import evaluate, sum_evals, get_global_reference, print_diff
 from asr_tools.sentence_util import print_sentence
-
 
 """
 These functions have dependencies on evaluation_util, not the other way around.
 
 """
-
 
 # Oracle related functions
 
@@ -22,16 +27,16 @@ def evaluate_nbests_oracle(nbests):
     return sum_evals(evals)
 
 # Evaluating n-bests
-
 def evaluate_nbest(nbest, force=False):
     """Run our evaluation on each sentence in the nbest list.  Will skip evaluation if one
     is already there, unless forced to.  Saves the evaluation with each sentence."""
     for s in nbest.sentences:
         if force or s.eval_ is None:    # Only compute the evaluation if not already computed.
             e = evaluate(asr_tools.evaluation_util.REFERENCES, s)
-            s.eval_ = e
+        assert(s.eval_) # Make sure we have one
     return nbest.sentences[0].eval_
 
+# This could run mulitple threads, but I've been having trouble getting that working
 def evaluate_nbests(nbests):
     """Return a single evaluation of list of n-best lists."""
     evals = list(map(evaluate_nbest, nbests))
@@ -49,15 +54,14 @@ def evals_by_depth(nbests, n=100):
 
 
 # Printing n-bests
-
+# TODO: This might be relatively slow because of all the string concatenation
 def print_nbest(nbest, acscore=True, lmscore=True, tscore=True, tscore_wip=False,
                 wcount=False, lmwt=10.0, maxwords=None, print_instances=False):
-    """Returns a string representation of the object."""
-    # This might be relatively slow because of all the string concatenation
+    """Returns a string representation of the object.  Doesn't actually *print*."""
     print_str = ''
     hyp = nbest.sentences[0]
     best = nbest.oracle_hyp()
-    best_rank = nbest.sentences.index(best)
+    best_rank = nbest.rank(best)
     print_str += 'ID: {} (#{} is best)\n'.format(nbest.id_, best_rank + 1)
 
     # Print reference if available
@@ -67,7 +71,6 @@ def print_nbest(nbest, acscore=True, lmscore=True, tscore=True, tscore_wip=False
     else:
         print_str += '    No reference found.\n'
     print_str += 'HYP:  ' + str(hyp) + '\n'
-    # print_str += 'BEST: '.format(best_rank + 1) + str(best) + '\n'
     print_str += 'BEST: ' + str(best) + '({})\n'.format(best_rank + 1)
 
     if print_instances:
@@ -80,15 +83,31 @@ def print_nbest(nbest, acscore=True, lmscore=True, tscore=True, tscore_wip=False
             print_str += '\n'
     print(print_str)
 
+def score_string(s, acscore=True, lmscore=True, tscore=True):
+    output = StringIO()
+    number_template = '{:8,.2f}'
+    spaces = 2
+    if acscore:
+        output.write(number_template.format(s.acscore) + ' ' * spaces)
+    if lmscore:
+        output.write(number_template.format(s.lmscore) + ' ' * spaces)
+    # if tscore:
+    #     output.write(number_template.format(s.score(lmwt=lmwt)) + ' ' * spaces)
+    return output.getvalue()
+    
 def print_nbest_ref_hyp_best(nbest):
     """Print three sentences: the reference, the top hypothesis, and the lowest WER
     hypothesis on the n-best list."""
     ref = get_global_reference(nbest.id_)
     hyp = nbest.sentences[0]
     best = nbest.oracle_hyp()
-    print_diff(ref, best, prefix1='REF: ', prefix2='BEST:')
-    print('---')
-    print_diff(best, hyp, prefix1='BEST:', prefix2='HYP: ')
+    best_rank = nbest.rank(best)
+    suffix1 = "{} ({})".format(score_string(best), best_rank + 1)
+    suffix2 = "{}".format(score_string(hyp))    
+    
+    print(nbest.id_)
+    print('REF:  {}'.format(ref))
+    print_diff(best, hyp, prefix1='BEST:', prefix2='HYP: ', suffix1=suffix1, suffix2=suffix2)
     print('=' * 60)
 
 def print_nbests(nbests):
@@ -98,9 +117,7 @@ def print_nbests(nbests):
         print_nbest(nbest, acscore=True, lmscore=True, tscore=True, maxwords=10, print_instances=True)
 
 # Printing evaluations
-
-# This should be called print_nbest_eval...
-def print_eval(nbests):
+def print_nbest_eval(nbests):
     """Print an evaluation and an oracle evaluation."""
     eval_ = evaluate_nbests(nbests)
     print('Eval:')
@@ -113,34 +130,7 @@ def print_train_test_eval(train_nbests, test_nbests):
      on each of them."""
     print()
     print('Train eval:')
-    print_eval(train_nbests)
+    print_nbest_eval(train_nbests)
     print()
     print('Test eval:')
-    print_eval(test_nbests)
-
-    
-# Moved from nbest.py
-# These were causing a circular import... 
-# def print_with_wer(self):
-#     """Returns a string representation of the object."""
-#     best = nbest_best_sentence(self)
-#     best_rank = self.sentences.index(best)
-#     print_str = StringIO()
-#     print_str.write('ID: {} (#{} is best)\n'.format(self.id_, best_rank))
-#     for i, s in enumerate(self.sentences):
-#         print_str.write('{:3d} {}'.format(i + 1, s))
-#         if best_rank == i:
-#             print_str.write(' **')
-#         print_str.write('\n')
-#     print(print_str.getvalue())
-
-# This is another possible way to print the ref/hyp/best
-# print_str = ''
-# print_str += 'ID: {} (#{} is best)\n'.format(self.id_, best_rank)
-# if get_global_reference(self.id_):
-#     print_str += '{:3} '.format('') + str(ref) + '\n'
-# else:
-#     print_str += '    No reference found.\n'
-# print_str += '{:3d} '.format(1) + str(hyp) + '\n'
-# print_str += '{:3d} '.format(best_rank + 1) + str(best) + '\n'
-# print(ref)
+    print_nbest_eval(test_nbests)

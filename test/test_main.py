@@ -14,7 +14,7 @@ from asr_tools.evaluation_util import print_diff, sum_evals
 
 from asr_tools.nbest_util import print_nbest, print_nbest_ref_hyp_best
 from asr_tools.nbest_util import evaluate_nbests, evaluate_nbest, evaluate_nbests_oracle, evals_by_depth
-from asr_tools.nbest_util import print_nbests, print_eval, print_train_test_eval
+from asr_tools.nbest_util import print_nbests, print_train_test_eval
 
 from asr_tools.scores import monotone
 from asr_tools.reranking import rerank_nbest, rerank_nbests
@@ -165,4 +165,4 @@ class Testing(unittest.TestCase):
         self.assertTrue(monotone(self.nbests[0].sentences, comparison=operator.lt, key=Sentence.score))
 
 
-    #TODO - Add tests for re<ranking.py
+    #TODO - Add tests for re-ranking.py

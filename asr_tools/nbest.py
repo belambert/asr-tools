@@ -34,4 +34,8 @@ class NBest(object):
         if n: sentences = sentences[:n]
         return min(sentences, key=lambda x: x.wer())
 
+    def is_improveable(self):
+        return self.oracle_hyp().eval_.wer() < self.hyp().eval_.wer()
     
+    def rank(self, sentence):
+        return self.sentences.index(sentence)

@@ -24,7 +24,7 @@ class Sentence(object):
         else:
             raise Exception('No cached evaluation for this sentence.')
 
-    def score(self, lmwt=10):
+    def score(self, lmwt=14):
         """Return the overall score as specified by the ASR engine:
         acoustic_score + lm_score * lm_weight."""
         return self.acscore + self.lmscore * lmwt

@@ -34,10 +34,11 @@ class Evaluation(object):
 
     def __str__(self):
         """Print the primary evaluation metrics."""
-        lines = ["Ref length: {:>10,d}".format(self.ref_len),
-                 "Matches:    {:>10,d}".format(self.matches),
-                 "Errors:     {:>10,d}".format(self.errs),
-                 "WER:        {:>10.2%}".format(self.wer())]
+        # lines = ["Ref length: {:>10,d}".format(self.ref_len),
+        #          "Matches:    {:>10,d}".format(self.matches),
+        #          "Errors:     {:>10,d}".format(self.errs),
+        #          "WER:        {:>10.2%}".format(self.wer())]
+        lines = ["WER:        {:>10.2%}".format(self.wer())]
         return '\n'.join(lines)
 
     def __lt__(self, other):

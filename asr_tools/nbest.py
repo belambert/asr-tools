@@ -25,6 +25,9 @@ class NBest(object):
             print_str.write('{:3d} {}\n'.format(i + 1, s))
         return print_str.getvalue()
 
+    def crop(self, n):
+        self.sentences = self.sentences[:n]
+    
     def hyp(self):
         return self.sentences[0]
 

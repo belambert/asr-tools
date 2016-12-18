@@ -17,5 +17,5 @@ def rerank_nbests(nbests, func):
 def rerank_nbest(nbest, func):
     """Given an n-best list and a function, rerank the n-best list
     using that function."""
-    nbest.sentences = sorted(nbest.sentences, key=func)
-    
+    # nbest.sentences = sorted(nbest.sentences, key=func)
+    nbest.sentences.sort(key=func)

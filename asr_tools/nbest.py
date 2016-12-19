@@ -7,9 +7,6 @@ Representation of n-best lists.
 class NBest(object):
     """Represents an n-best list of ASR hypotheses."""
 
-    sentences = None
-    id_ = None
-
     def __init__(self, sentences, id_=None):
         """Sentences and IDs are required."""
         assert(sentences is not None)

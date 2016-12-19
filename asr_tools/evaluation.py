@@ -4,10 +4,6 @@ class Evaluation(object):
     requirements on what's being evaluated.  So it could be a single sentence
     evaluation, or an evaluation for an entire corpus."""
 
-    ref_len = None
-    matches = None
-    errs = None
-
     def __init__(self, ref_len, matches, errs):
         """Constructor requires ref_len, # of matches, and # of errors."""
         self.ref_len = ref_len

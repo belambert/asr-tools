@@ -160,9 +160,10 @@ class Testing(unittest.TestCase):
         print_train_test_eval(self.nbests, self.nbests)
         sys.stdout.close()
         sys.stdout = sys.__stdout__
- 
-    def test_scoring(self):
-        self.assertTrue(monotone(self.nbests[0].sentences, comparison=operator.lt, key=Sentence.score))
+
+    # There's no guarantee of monotonicity
+    # def test_scoring(self):
+    #     self.assertTrue(monotone(self.nbests[0].sentences, comparison=operator.lt, key=Sentence.score))
 
 
     #TODO - Add tests for re-ranking.py

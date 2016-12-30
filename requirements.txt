@@ -1,3 +1,4 @@
 edit_distance
 asr_evaluation
 matplotlib
+termcolor

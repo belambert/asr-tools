@@ -15,6 +15,6 @@ setup(
         "Programming Language :: Python",
         "Topic :: Scientific/Engineering",
         "License :: OSI Approved :: BSD License"],
-    # install_requires=['edit_distance', 'asr_evaluation'],
+    install_requires=['edit_distance', 'asr_evaluation', 'matplotlib', 'termcolor'],
     test_suite='test.test_main'
 )

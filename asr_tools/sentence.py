@@ -2,7 +2,7 @@
 class Sentence(object):
     """Represents a sentence or utterance."""
     
-    def __init__(self, id_, words, acscore=None, lmscore=None):
+    def __init__(self, id_, words, acscore=None, lmscore=None, lmscores=None, acscores=None):
         """Constructor.  ID and words are required."""
         self.id_ = id_
         self.words = words
@@ -10,6 +10,8 @@ class Sentence(object):
         self.lmscore = lmscore
         self.eval_ = None
         self.feature_vector = None
+        self.lmscores = lmscores
+        self.acscores = acscores
 
     def __str__(self):
         """Returns a string representation of this object."""

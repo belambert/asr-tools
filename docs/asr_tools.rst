@@ -10,7 +10,6 @@ asr_tools.evaluation module
 .. automodule:: asr_tools.evaluation
     :members:
     :undoc-members:
-    :show-inheritance:
 
 asr_tools.evaluation_util module
 --------------------------------
@@ -50,7 +49,6 @@ asr_tools.nbest module
 .. automodule:: asr_tools.nbest
     :members:
     :undoc-members:
-    :show-inheritance:
 
 asr_tools.nbest_util module
 ---------------------------
@@ -82,7 +80,6 @@ asr_tools.sentence module
 .. automodule:: asr_tools.sentence
     :members:
     :undoc-members:
-    :show-inheritance:
 
 asr_tools.sentence_util module
 ------------------------------
@@ -98,7 +95,6 @@ asr_tools.util module
 .. automodule:: asr_tools.util
     :members:
     :undoc-members:
-    :show-inheritance:
 
 
 Module contents

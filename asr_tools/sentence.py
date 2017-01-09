@@ -1,7 +1,10 @@
+"""
+Just a class to represent a sentence or utterance.
+"""
 
 class Sentence(object):
     """Represents a sentence or utterance."""
-    
+
     def __init__(self, id_, words, acscore=None, lmscore=None, lmscores=None, acscores=None):
         """Constructor.  ID and words are required."""
         self.id_ = id_

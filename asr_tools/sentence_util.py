@@ -1,10 +1,10 @@
-from io import StringIO
-
 """
 Print a sentence, optionally with lots of additional information like the ASR scores.
 """
 
-# This doesn't actually print it, it returns a string...
+from io import StringIO
+
+# TODO - This doesn't actually print it, it returns a string...
 def print_sentence(s, acscore=True, lmscore=True, tscore=True, tscore_wip=False,
                    wcount=False, lmwt=10.0, maxwords=None, wer=True):
     """Prints all sentence scores including acoustic, lm, overall, etc."""

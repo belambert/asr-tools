@@ -1,15 +1,23 @@
+# pylint: disable=global-statement
+
+"""
+Utility functions for keeping track of ASR references and for evaluating
+ASR hypotheses.
+"""
+
+import copy
 from collections import OrderedDict
+
 from edit_distance import SequenceMatcher, edit_distance
 from asr_tools.evaluation import Evaluation
 from asr_tools.kaldi import read_transcript_table
-
-# This is the only place in asr_tools (and semlm) that we refer to asr_evaluation
 from asr_evaluation.asr_evaluation import print_diff as eval_print_diff
-
 
 REFERENCES = OrderedDict()
 
 def evaluate_hyps(hyps, ref_table):
+    """Given a list of hypotheses and a reference table, return a list of
+    evaluations for the respective hypotheses."""
     evals = []
     for hyp in hyps:
         eval_ = evaluate(ref_table, hyp)
@@ -19,7 +27,7 @@ def evaluate_hyps(hyps, ref_table):
 def sentence_editdistance(s1, s2):
     """Given two 'sentence' objects compute the edit distance and
     return the distance."""
-    distance, matches = edit_distance(s1.words, s2.words)
+    distance, _ = edit_distance(s1.words, s2.words)
     return distance
 
 def evaluate(ref_table, s):
@@ -41,19 +49,21 @@ def set_global_references(ref_file):
 
 def get_global_reference(id_):
     """Look-up ASR references by id."""
-    global REFERENCES
     return REFERENCES.get(id_)
 
-# This is the only place we use anything from asr-evaluation
-def print_diff(s1, s2, prefix1='REF:', prefix2='HYP:',suffix1=None, suffix2=None):
-    """Print a readable diff between two sentences."""
+def print_diff(s1, s2, prefix1='REF:', prefix2='HYP:', suffix1=None, suffix2=None):
+    """Print a readable diff between two sentences.
+
+    This is the only place we use anything from asr-evaluation."""
     a = s1.words
     b = s2.words
     sm = SequenceMatcher(a, b)
     eval_print_diff(sm, s1.words, s2.words, prefix1=prefix1, prefix2=prefix2, suffix1=suffix1, suffix2=suffix2)
 
 def sum_evals(evals):
+    """Sum a list of evaluations.  Returns the first evaluation if there's
+    only one."""
     if len(evals) == 1:
-        return evals[0]
+        return copy.copy(evals[0])
     else:
         return sum(evals[1:], evals[0])

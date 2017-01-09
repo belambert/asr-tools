@@ -1,12 +1,11 @@
-
 """
 Very basic functions for re-ranking n-best lists.
 
 Not used locally in the asr-tools package, but might be used in semlm or other packages.
 """
 
-# Hm, re-ranking doesn't necessarily have to *actually* re-rank.  It could just
-# compute statistics  But does it matter?
+# TODO: re-ranking doesn't necessarily have to *actually* re-rank.  It could just
+# compute statistics
 
 def rerank_nbests(nbests, func):
     """Given a a list of nbests and a function, rerank all the nbests

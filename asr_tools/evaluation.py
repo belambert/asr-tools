@@ -1,6 +1,11 @@
+"""
+A class that represents an evaluation.  This doesn't have any particular
+requirements on what's being evaluated.  So it could be a single sentence
+evaluation, or an evaluation for an entire corpus.
+"""
 
 class Evaluation(object):
-    """An class the represents an evaluation.  This doesn't have any particular
+    """A class that represents an evaluation.  This doesn't have any particular
     requirements on what's being evaluated.  So it could be a single sentence
     evaluation, or an evaluation for an entire corpus."""
 
@@ -30,10 +35,6 @@ class Evaluation(object):
 
     def __str__(self):
         """Print the primary evaluation metrics."""
-        # lines = ["Ref length: {:>10,d}".format(self.ref_len),
-        #          "Matches:    {:>10,d}".format(self.matches),
-        #          "Errors:     {:>10,d}".format(self.errs),
-        #          "WER:        {:>10.2%}".format(self.wer())]
         lines = ["WER:        {:>10.2%}".format(self.wer())]
         return '\n'.join(lines)
 

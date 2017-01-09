@@ -1,22 +1,15 @@
-import copy
-import asr_tools.evaluation_util
-
-from multiprocessing import Pool
-# WTF why isn't this working?!
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
-
+"""
+Utility functions for handling nbest lists.
+These functions have dependencies on evaluation_util, not the other way around.
+"""
 
 from io import StringIO
+
+import asr_tools.evaluation_util
 from asr_tools.evaluation_util import evaluate, sum_evals, get_global_reference, print_diff
 from asr_tools.sentence_util import print_sentence
 
-"""
-These functions have dependencies on evaluation_util, not the other way around.
-
-"""
-
 # Oracle related functions
-
 def nbest_oracle_eval(nbest, n=None):
     """Return the evaluation object of the best sentence in the nbest list."""
     return nbest.oracle_hyp(n=n).eval_
@@ -32,8 +25,8 @@ def evaluate_nbest(nbest, force=False):
     is already there, unless forced to.  Saves the evaluation with each sentence."""
     for s in nbest.sentences:
         if force or s.eval_ is None:    # Only compute the evaluation if not already computed.
-            e = evaluate(asr_tools.evaluation_util.REFERENCES, s)
-        assert(s.eval_) # Make sure we have one
+            evaluate(asr_tools.evaluation_util.REFERENCES, s)
+        assert s.eval_  # Make sure we have one
     return nbest.sentences[0].eval_
 
 # This could run mulitple threads, but I've been having trouble getting that working
@@ -44,13 +37,13 @@ def evaluate_nbests(nbests):
 
 def evals_by_depth(nbests, n=100):
     """Return overall oracle evaluations as a function of the depth of the n-best lists."""
-    evals_by_depth = [None] * n
+    evals_by_depth_ = [None] * n
     for i in range(n):
         evals = []
         for nbest in nbests:
             evals.append(nbest_oracle_eval(nbest, i + 1))
-        evals_by_depth[i] = sum_evals(evals)
-    return evals_by_depth
+        evals_by_depth_[i] = sum_evals(evals)
+    return evals_by_depth_
 
 
 # Printing n-bests
@@ -83,7 +76,9 @@ def print_nbest(nbest, acscore=True, lmscore=True, tscore=True, tscore_wip=False
             print_str += '\n'
     print(print_str)
 
-def score_string(s, acscore=True, lmscore=True, tscore=True):
+def score_string(s, acscore=True, lmscore=True, tscore=False):
+    """Return a string that represents the score.  Which scores are included
+    are toggled by the args to this function."""
     output = StringIO()
     number_template = '{:8,.2f}'
     spaces = 2
@@ -91,10 +86,10 @@ def score_string(s, acscore=True, lmscore=True, tscore=True):
         output.write(number_template.format(s.acscore) + ' ' * spaces)
     if lmscore:
         output.write(number_template.format(s.lmscore) + ' ' * spaces)
-    # if tscore:
-    #     output.write(number_template.format(s.score(lmwt=lmwt)) + ' ' * spaces)
+    if tscore:
+        output.write(number_template.format(s.score()) + ' ' * spaces)
     return output.getvalue()
-    
+
 def print_nbest_ref_hyp_best(nbest):
     """Print three sentences: the reference, the top hypothesis, and the lowest WER
     hypothesis on the n-best list."""
@@ -103,8 +98,7 @@ def print_nbest_ref_hyp_best(nbest):
     best = nbest.oracle_hyp()
     best_rank = nbest.rank(best)
     suffix1 = "{} ({})".format(score_string(best), best_rank + 1)
-    suffix2 = "{}".format(score_string(hyp))    
-    
+    suffix2 = "{}".format(score_string(hyp))
     print(nbest.id_)
     print('REF:  {}'.format(ref))
     print_diff(best, hyp, prefix1='BEST:', prefix2='HYP: ', suffix1=suffix1, suffix2=suffix2)

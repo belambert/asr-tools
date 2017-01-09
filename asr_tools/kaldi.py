@@ -1,3 +1,8 @@
+"""
+Functions primarily for reading and writing Kaldi transcripts
+and n-best files.
+"""
+
 import logging
 import itertools
 from collections import OrderedDict
@@ -5,7 +10,7 @@ from asr_tools.nbest import NBest
 from asr_tools.sentence import Sentence
 from asr_tools.evaluation import Evaluation
 
-logger = logging.getLogger('asr_tools')
+LOGGER = logging.getLogger('asr_tools')
 
 def read_transcript_table(f):
     """Given a file, read in the transcripts into a hash table
@@ -33,10 +38,10 @@ def read_nbest_file(f, progress=False):
     prev_id = None
     id_ = None
     while True:
-        logger.debug('|NBESTS| = {:,d}'.format(len(nbests)))
-        logger.debug('|NBEST| = {:,d}'.format(len(nbest)))
+        LOGGER.debug('|NBESTS| = {:,d}'.format(len(nbests)))
+        LOGGER.debug('|NBEST| = {:,d}'.format(len(nbest)))
         entry = read_nbest_entry_lines(f)  # this is a sentence, which is spread across several lines
-        logger.debug('ENTRY: ' + str(entry))
+        LOGGER.debug('ENTRY: ' + str(entry))
         if not entry:
             nbests.append(NBest(nbest, id_))
             break
@@ -47,7 +52,7 @@ def read_nbest_file(f, progress=False):
         # Just starting out.
         if not prev_id:
             prev_id = id_
-            assert(rank == len(nbest) + 1)
+            assert rank == len(nbest) + 1
         # If the ID changed, then create an NBest, and start over.
         if id_ != prev_id:
             nbests.append(NBest(nbest, prev_id))
@@ -57,7 +62,7 @@ def read_nbest_file(f, progress=False):
                 if len(nbests) % 1000 == 0:
                     print('Read {:,d} nbests.'.format(len(nbests)))
         else:
-            assert(rank == len(nbest) + 1)
+            assert rank == len(nbest) + 1
         s = entry_lines_to_sentence(entry)
         nbest.append(s)
     return nbests
@@ -94,12 +99,12 @@ def entry_lines_to_sentence(lines):
         _, reflen, matches, errs = id_tokens
         evaluation = Evaluation(int(reflen), int(matches), int(errs))
     # The last line should be a single token.
-    assert(len(lines[-1].split()) == 1)
+    assert len(lines[-1].split()) == 1
     for line in lines:
         tokens = line.split()
         if len(tokens) == 4:
-            s1, s2, word, scores = tokens
-            assert(int(s1) == int(s2) - 1)         # TODO - some more sanity checks
+            s1, s2, _, scores = tokens
+            assert int(s1) == int(s2) - 1         # TODO - add more more sanity checks
             score_parts = scores.split(',')
             lmscores.append(float(score_parts[0]))
             acscores.append(float(score_parts[1]))
@@ -116,14 +121,14 @@ def write_nbests(f, nbests, save_eval=False):
         for i, sentence in enumerate(nbest.sentences, start=1):
             id_line = nbest.id_ + '-' + str(i)
             if save_eval:
-                id_line = '{} {} {} {}'.format(id_line, sentence.eval_.ref_len, sentence.eval_.matches, sentence.eval_.errs)
+                id_line = '{} {} {} {}'.format(id_line, sentence.eval_.ref_len,
+                                               sentence.eval_.matches, sentence.eval_.errs)
             f.write(id_line + ' \n') # Kaldi puts an extra space here...
             f.write('0 1 <eps> \n')
             counter = 1
-            for word, lmscore, acscore in itertools.zip_longest(sentence.words, sentence.lmscores, sentence.acscores, fillvalue=0.0):
+            for word, lmscore, acscore in itertools.zip_longest(sentence.words, sentence.lmscores,
+                                                                sentence.acscores, fillvalue=0.0):
                 f.write('{} {} {} {},{}, \n'.format(counter, counter+1, word, lmscore, acscore))
                 counter += 1
             f.write('{} \n'.format(len(sentence.words) + 1))
             f.write('\n')
-
-

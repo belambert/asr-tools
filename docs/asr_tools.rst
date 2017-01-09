@@ -35,14 +35,6 @@ asr_tools.kaldi module
     :undoc-members:
     :show-inheritance:
 
-asr_tools.logger_test module
-----------------------------
-
-.. automodule:: asr_tools.logger_test
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 asr_tools.nbest module
 ----------------------
 
@@ -95,12 +87,3 @@ asr_tools.util module
 .. automodule:: asr_tools.util
     :members:
     :undoc-members:
-
-
-Module contents
----------------
-
-.. automodule:: asr_tools
-    :members:
-    :undoc-members:
-    :show-inheritance:

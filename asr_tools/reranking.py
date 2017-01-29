@@ -16,5 +16,21 @@ def rerank_nbests(nbests, func):
 def rerank_nbest(nbest, func):
     """Given an n-best list and a function, rerank the n-best list
     using that function."""
-    # nbest.sentences = sorted(nbest.sentences, key=func)
+    print("REGULAR")
     nbest.sentences.sort(key=func)
+
+def pseudo_rerank_nbests(nbests, func):
+    """Given a a list of nbests and a function, rerank all the nbests
+    with the given function."""
+    for nbest in nbests:
+        pseudo_rerank_nbest(nbest, func)
+
+def pseudo_rerank_nbest(nbest, func):
+    """Given an n-best list and a function, rerank the n-best list
+    using that function."""
+    print("PSEUDO")
+    best = nbest.sentences.min(key=func)
+    nbest.sentences.remove(best)
+    nbest.sentences.insert(0, best)
+
+    

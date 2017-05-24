@@ -14,9 +14,9 @@ matrix:
   - python: '3.3'
 install:
   - pip install -r requirements.txt 
-  - pip install coveralls
+  - pip install codecov
 script:
   - python setup.py test
   - python -m coverage run --source asr_tools setup.py test
 after_success:
-  - coveralls
+  - codecov

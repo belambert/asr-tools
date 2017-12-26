@@ -1,3 +1,19 @@
+# Copyright 2012-2018 Ben Lambert
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#     http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+
 #~/bin/sh -x
 
 # /home/bel/software/kaldi-trunk/src/latbin/lattice-rmali 'ark,t:gunzip -c /home/bel/kaldi-recipes/librispeech/s5/exp/tri5b/test_dev/decode_fglarge_dev_other/lat.1.gz|' 'ark,t:|gzip -c > /home/bel/kaldi-recipes/librispeech/s5/exp/tri5b/test_dev/decode_fglarge_dev_other_noali/lat.1.no_ali' 

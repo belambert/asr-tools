@@ -2,6 +2,6 @@ asr_tools
 ============
 
 [![Build Status](https://travis-ci.org/belambert/asr-tools.svg?branch=master)](https://travis-ci.org/belambert/asr-tools)
-[![Coverage Status](https://coveralls.io/repos/github/belambert/asr-tools/badge.svg?branch=master)](https://coveralls.io/github/belambert/asr-tools?branch=master)
+[![codecov](https://codecov.io/gh/belambert/asr-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/belambert/asr-tools)
 
 ASR tools.
